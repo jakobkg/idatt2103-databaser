@@ -26,19 +26,23 @@ where
 ```sql
 select
     fornavn || ' ' || etternavn ||
-    ', ansiennitet: ' || ansiennitet || ' år'
+    ', ansiennitet: ' || ansiennitet || ' år' as Andelseier
 from
-    andelseier;
+    andelseier
+order by
+    ansiennitet desc;
 ```
 
 ```
-+---------------------------------------+
-| Even Trulsbo, ansiennitet: 3 år       |
-| Anna Olsen, ansiennitet: 10 år        |
-| Ingrid Olsen, ansiennitet: 8 år       |
-| Arne Torp, ansiennitet: 7 år          |
-| Arne Martinsen, ansiennitet: 4 år     |
-+---------------------------------------+
++------------------------------------+
+| Andelseier                         |
++------------------------------------+
+| Anna Olsen, ansiennitet: 10 år     |
+| Ingrid Olsen, ansiennitet: 8 år    |
+| Arne Torp, ansiennitet: 7 år       |
+| Arne Martinsen, ansiennitet: 4 år  |
+| Even Trulsbo, ansiennitet: 3 år    |
++------------------------------------+
 ```
 
 \newpage
@@ -47,14 +51,14 @@ from
 
 ```sql
 select
-    min(etabl_aar) as tidligste_etablering
+    min(etabl_aar) as "Tidligste etablering"
 from
     borettslag;
 ```
 
 ```
 +----------------------+
-| tidligste_etablering |
+| Tidligste etablering |
 +----------------------+
 |                 1980 |
 +----------------------+
@@ -64,7 +68,7 @@ from
 
 ```sql
 select distinct
-    bygn_adr as adresse
+    bygn_adr as Adresse
 from
     bygning
     natural join leilighet
@@ -74,7 +78,7 @@ where
 
 ```
 +---------------+
-| adresse       |
+| Adresse       |
 +---------------+
 | Åsveien 100a  |
 +---------------+
@@ -84,7 +88,7 @@ where
 
 ```sql
 select
-    count(*) as antall
+    count(*) as Antall
 from
     bygning
 where
@@ -93,7 +97,7 @@ where
 
 ```
 +--------+
-| antall |
+| Antall |
 +--------+
 |      4 |
 +--------+
@@ -103,8 +107,8 @@ where
 
 ```sql
 select
-    borettslag.bolag_navn "borettslag",
-    count(bygning.bolag_navn) "antall bygg"
+    borettslag.bolag_navn as Borettslag,
+    count(bygning.bolag_navn) as "Antall bygg"
 from
     borettslag
     left join bygning
@@ -116,7 +120,7 @@ group by
 
 ```
 +------------+-------------+
-| borettslag | antall bygg |
+| Borettslag | Antall bygg |
 +------------+-------------+
 | Lerken     |           0 |
 | Sisiken    |           1 |
@@ -128,7 +132,7 @@ group by
 
 ```sql
 select
-    count(*) "antall"
+    count(*) as Antall
 from
     leilighet
     natural join bygning
@@ -138,7 +142,7 @@ where
 
 ```
 +--------+
-| antall |
+| Antall |
 +--------+
 |      4 |
 +--------+
@@ -150,7 +154,7 @@ where
 
 ```sql
 select
-    max(ant_etasjer) "høyeste etasje"
+    max(ant_etasjer) as "Høyeste etasje"
 from
     bygning
 where
@@ -159,7 +163,7 @@ where
 
 ```
 +-----------------+
-| høyeste etasje  |
+| Høyeste etasje  |
 +-----------------+
 |               6 |
 +-----------------+
@@ -196,8 +200,8 @@ where
 
 ```sql
 select
-    borettslag.bolag_navn "Borettslag",
-    count(andelseier.and_eier_nr) "Deleiere"
+    borettslag.bolag_navn as Borettslag,
+    count(andelseier.and_eier_nr) as Deleiere
 from
     borettslag
     left join andelseier
@@ -206,7 +210,7 @@ from
 group by
     borettslag.bolag_navn
 order by
-    "Deleiere";
+    Deleiere;
 ```
 
 ```
@@ -223,7 +227,7 @@ order by
 
 ```sql
 select
-    fornavn || " " || etternavn "Navn", leil_nr
+    fornavn || " " || etternavn as Navn, leil_nr
 from
     andelseier
     left join leilighet
@@ -263,8 +267,8 @@ Empty set
 
 ```sql
 select
-    poststed.postnr || " " || poststed "Sted",
-    count(and_eier_nr) "Antall eiere"
+    poststed.postnr || " " || poststed as Sted,
+    count(and_eier_nr) as "Antall eiere"
 from
     poststed
     left join leilighet
@@ -273,7 +277,7 @@ from
     on
         poststed.postnr = bygning.postnr
 group by
-    poststed.postnr;
+    Sted;
 ```
 
 ```
