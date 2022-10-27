@@ -1,0 +1,34 @@
+[Kunde]1..*-0..*[Ordre]
+[Standardstol]0..*-1..1[Stoltype]
+[Ordre]1..*-0..*[Ordre_Standardstol]0..*-1..*[Standardstol]
+[Arbeidsstasjon]1..1-0..*[Stoldel]
+[Stoldel]0..*-0..1[Stofftype]1..1-0..*[Stoffrull]
+[Spesialstol]1..1-1..*[Spesialstol_deler]0..*-1..*[Stoldel]
+[Ordre]1..*-0..*[Ordre_Spesialstol]0..*-1..*[Spesialstol]
+[Spesialstol]0..*-1..1[Stoltype]
+
+//---------------------------------------------------------
+
+[Kunde|🗝️ kundenr: int;navn: string;adresse: string]
+
+[Ordre|🗝️ ordrenr: int; kundenr*: int; ordredato: dato;antatt_levering: dato;levert_dato: dato;betalingsstatus: string;rabattprosent: float;]
+
+[Standardstol|🗝️ serienr: int;modellnavn: string;type*: int;pris: int;lagerstatus: int;]
+
+[Stoltype|🗝️ id: int;navn: string;]
+
+[Spesialstol|🗝️ serienr: int;modellnavn: string;type*: int;]
+
+[Spesialstol_deler|🗝️ stol_serienr*: int;🗝️ del_id*: int; antall: int;]
+
+[Ordre_Standardstol|🗝️ ordrenr*: int;🗝️ serienr*: int; antall: int;]
+
+[Ordre_Spesialstol|🗝️ ordrenr*: int;🗝️ serienr*: int;antall: int;]
+
+[Arbeidsstasjon|🗝️ stasjonsnr: int; plassering: string;]
+
+[Stoldel|🗝️ serienr: int;navn: string;farge: string;pris: float;beskrivelse: string;stofftype*: int; stoffmengde: float;stasjon*: int;lagerstatus: int;]
+
+[Stofftype|🗝️ serienr: int;navn: string;farge: string;meterpris: float;beskrivelse: string;]
+
+[Stoffrull|🗝️ serienr: int; stofftype*: int; meter: float;]

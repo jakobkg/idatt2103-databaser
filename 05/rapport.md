@@ -31,7 +31,7 @@ Den oppgitte relasjonen i oppgaveteksten kommer til å ha problemer med registre
 	\centering
 	\begin{tabular}{|l|}
 		\hline
-		Kunde \\
+		\bf{Kunde} \\
 		\hline
 		kunde\_id \\
 		navn \\
@@ -44,7 +44,7 @@ Den oppgitte relasjonen i oppgaveteksten kommer til å ha problemer med registre
 	\centering
 	\begin{tabular}{|l|}
 		\hline
-		Eier \\
+		\bf{Eier} \\
 		\hline
 		eier\_id \\
 		navn \\
@@ -57,7 +57,7 @@ Den oppgitte relasjonen i oppgaveteksten kommer til å ha problemer med registre
 	\centering
 	\begin{tabular}{|l|}
 		\hline
-		Eiendom \\
+		\bf{Eiendom} \\
 		\hline
 		eiendom\_id \\
 		adresse \\
@@ -70,7 +70,7 @@ Den oppgitte relasjonen i oppgaveteksten kommer til å ha problemer med registre
 	\centering
 	\begin{tabular}{|l|}
 		\hline
-		Leieavtale \\
+		\bf{Leieavtale} \\
 		\hline
 		eiendom\_id \\
 		kunde\_id \\
