@@ -1,0 +1,19 @@
+\documentclass[]{article}
+
+\usepackage{emoji}
+
+\begin{titlepage}
+    \title{IDATT2103, Øving 8}
+    \author{Jakob Grønhaug (jakobkg@stud.ntnu.no)}
+    \date{}
+\end{titlepage}
+\begin{document}
+    \maketitle
+    \section*{Case}
+    I denne oppgaven har jeg valgt å lage en database-løsning relatert til jobben min, som kundestøtte for bedriftkunder hos et større selskap. Denne database-løsningen er tenkt som grunnlag for et saksbehandlings-system, der flere konsulenter kan logge inn for å se, opprette eller redigere loggførte saker og saksdokumenter som er knyttet opp mot et gitt kundeforhold.
+
+    I denne modellen vil det være nødvendig med tabeller for kundebehandlere, kundeforhold, saker, saksinnhold og sakstyper. Tabellen for kundebehandlere burde kunne unikt identifisere hver enkelt kudebehandler, men fremdeles gjøre det mulig å endre på ting som fornavn og etternavn da dette er informasjon som kan endre seg gjennom et ansettelsesfohold og ikke burde være låst i databasen. En god kandidatnøkkel kan være et ansattnummer, eller et unikt brukernavn. Tabellen med kundeforhold burde inneholde unike kundenumre, kunders navn og organisasjonsnummer, og en form for kobling som gjør det mulig å knytte flere saker i sakssystemet tilsamme kunde. Hver sak i sakssystemet må være tilknyttet en kunde og en kundebehandler, ha en tittel og en beskrivelse, en sakstype og et tidspunkt som angir når saken ble opprettet. Saker må også ha saksinnhold og en sakstype, der saksinnhold kan være ting som saksbehandlers notater, epost sendt til kunde og epost mottatt fra kunde, og sakstype vil være kategorier som "support", "klage", "salgshenvendelse" o.l.
+
+    \subsection*{Kundebehandler}
+    Relasjonen som beskriver en kundebehandler burde ha et 
+\end{document}
