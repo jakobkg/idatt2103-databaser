@@ -10,10 +10,80 @@
 \begin{document}
     \maketitle
     \section*{Case}
-    I denne oppgaven har jeg valgt å lage en database-løsning relatert til jobben min, som kundestøtte for bedriftkunder hos et større selskap. Denne database-løsningen er tenkt som grunnlag for et saksbehandlings-system, der flere konsulenter kan logge inn for å se, opprette eller redigere loggførte saker og saksdokumenter som er knyttet opp mot et gitt kundeforhold.
+    I denne oppgaven har jeg valgt å lage en database-løsning relatert til jobben min, som kundestøtte for bedriftkunder hos et større selskap. Denne database-løsningen er tenkt som grunnlag for et saksbehandlings-system, der flere behandlere kan logge inn for å se, opprette eller redigere loggførte saker og saksdokumenter som er knyttet opp mot et gitt kundeforhold.
 
-    I denne modellen vil det være nødvendig med tabeller for kundebehandlere, kundeforhold, saker, saksinnhold og sakstyper. Tabellen for kundebehandlere burde kunne unikt identifisere hver enkelt kudebehandler, men fremdeles gjøre det mulig å endre på ting som fornavn og etternavn da dette er informasjon som kan endre seg gjennom et ansettelsesfohold og ikke burde være låst i databasen. En god kandidatnøkkel kan være et ansattnummer, eller et unikt brukernavn. Tabellen med kundeforhold burde inneholde unike kundenumre, kunders navn og organisasjonsnummer, og en form for kobling som gjør det mulig å knytte flere saker i sakssystemet tilsamme kunde. Hver sak i sakssystemet må være tilknyttet en kunde og en kundebehandler, ha en tittel og en beskrivelse, en sakstype og et tidspunkt som angir når saken ble opprettet. Saker må også ha saksinnhold og en sakstype, der saksinnhold kan være ting som saksbehandlers notater, epost sendt til kunde og epost mottatt fra kunde, og sakstype vil være kategorier som "support", "klage", "salgshenvendelse" o.l.
+    I denne modellen vil det være nødvendig med tabeller for kundebehandlere, kundeforhold, saker, saksinnhold og sakstyper. Tabellen for kundebehandlere burde kunne unikt identifisere hver enkelt kundebehandler, men fremdeles gjøre det mulig å endre på ting som fornavn og etternavn da dette er informasjon som kan endre seg gjennom et ansettelsesfohold og ikke burde være låst i databasen. En god kandidatnøkkel kan være et ansattnummer, eller et unikt brukernavn. Tabellen med kundeforhold burde inneholde unike kundenumre, kunders navn og organisasjonsnummer, og en form for kobling som gjør det mulig å knytte flere saker i sakssystemet til samme kunde. Hver sak i sakssystemet må være tilknyttet en kunde og en kundebehandler, ha en tittel og en beskrivelse, en sakstype og et tidspunkt som angir når saken ble opprettet. Saker må også ha saksinnhold og en sakstype, der saksinnhold kan være ting som saksbehandlers notater, epost sendt til kunde og epost mottatt fra kunde, og sakstype vil være kategorier som "support", "klage", "salgshenvendelse" o.l.
 
     \subsection*{Kundebehandler}
-    Relasjonen som beskriver en kundebehandler burde ha et 
+    Relasjonen som beskriver en kundebehandler burde ha felter for unikt brukernavn (\emoji{old-key}), fornavn, etternavn, epost-adresse og team-tilhørighet.
+
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \multicolumn{3}{|c|}{\textbf{Kundebehandler}} \\
+            \hline
+            Ansattnummer & integer & \emoji{old-key} \\
+            \hline
+            Fornavn & string &  \\
+            \hline
+            Etternavn & string & \\
+            \hline
+            Epost & string & \\
+            \hline
+            Team & integer & FK \\
+            \hline
+        \end{tabular}
+        \label{Kundebehandler-tabell}
+    \end{table}
+
+    \subsection*{Kundeforhold}
+    I denne tenkte situasjonen er kundene i systemet andre bedrifter, dermed er både kundenummer og organisasjonsnummer potensielle hovednøkler. I tillegg burde bedriftens navn, adresse og kontaktinfo være registrert.
+
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \multicolumn{3}{|c|}{\textbf{Kundeforhold}} \\
+            \hline
+            Kundenummer & integer & \emoji{old-key} \\
+            \hline
+            Org.-nummer & string &  \\
+            \hline
+            Navn & string &  \\
+            \hline
+            Adresse & string & \\
+            \hline
+            Epost & string & \\
+            \hline
+            Telefonnummer & string &  \\
+            \hline
+        \end{tabular}
+        \label{Kunde-tabell}
+    \end{table}
+
+    \subsection*{Sak}
+    Hver sak i systemet må ha et unikt saksnummer, være eid av en kundebehandler og være tilknyttet en bestemt kunde. I tillegg burde en sak ha et emne-felt, en beskrivelse og en kategori. En sak kan også inneholde flere forskjellige innlegg, som for eksempel kan være saksbehandlers notater, en mail sendt inn fra kunden eller en mail sendt ut til kunden.
+
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \multicolumn{3}{|c|}{\textbf{Sak}} \\
+            \hline
+            Saksnummer & integer & \emoji{old-key} \\
+            \hline
+            Kunde & integer & FK \\
+            \hline
+            Saksbehandler & integer & FK \\
+            \hline
+            Emne & string &  \\
+            \hline
+            Beskrivelse & string & \\
+            \hline
+            Kategori & string & FK \\
+            \hline
+        \end{tabular}
+        \label{Sak-tabell}
+    \end{table}
 \end{document}
