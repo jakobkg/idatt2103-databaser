@@ -1,6 +1,7 @@
 \documentclass[]{article}
 
 \usepackage{emoji}
+\usepackage{graphicx}
 
 \begin{titlepage}
     \title{IDATT2103, Øving 8}
@@ -37,6 +38,23 @@
         \label{Kundebehandler-tabell}
     \end{table}
 
+    \subsection*{Team}
+    For å fordele saksbehandlere i team vil jeg også putte eksisterende team i en egen tabell, slik at hver behandler har en fremmednøkkel som peker til team-tabellen. På denne måten sikres det at man ikke ved et uhell feilstaver noens team slik at de ikke dukker opp ved et database-søk av typen "Finn alle saker som er behandletav Team 3", og om et team oppløses vil man bedre kunne gjøre flyttingen av saksbehandlere til andre team da databasen kan konfigureres til å feile slettingen av et team fra tabellen dersom en eller flere kundebehandlere fremdeles har en fremmednøkkel som peker til teamet som skal slettes.
+
+    \begin{table*}[ht]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \multicolumn{3}{|c|}{\textbf{Team}} \\
+            \hline
+            ID & integer & \emoji{old-key} \\
+            \hline
+            Navn & string & \\
+            \hline
+        \end{tabular}
+        \label{Team-tabell}
+    \end{table*}
+
     \subsection*{Kundeforhold}
     I denne tenkte situasjonen er kundene i systemet andre bedrifter, dermed er både kundenummer og organisasjonsnummer potensielle hovednøkler. I tillegg burde bedriftens navn, adresse og kontaktinfo være registrert.
 
@@ -63,7 +81,7 @@
     \end{table}
 
     \subsection*{Sak}
-    Hver sak i systemet må ha et unikt saksnummer, være eid av en kundebehandler og være tilknyttet en bestemt kunde. I tillegg burde en sak ha et emne-felt, en beskrivelse og en kategori. En sak kan også inneholde flere forskjellige innlegg, som for eksempel kan være saksbehandlers notater, en mail sendt inn fra kunden eller en mail sendt ut til kunden.
+    Hver sak i systemet må ha et unikt saksnummer, være eid av en kundebehandler og være tilknyttet en bestemt kunde. I tillegg burde en sak ha et emne-felt, en beskrivelse og en kategori. En sak kan også inneholde flere forskjellige innlegg, som for eksempel kan være saksbehandlers notater, en mail sendt inn fra kunden eller en mail sendt ut til kunden. Siden en enkelt sak kan inneholde null til mange stykker med innhold vil ikke disse lagres i denne tabellen, men heller ved at hvert stykke innhold har saksnummeret som fremmednøkkel og kan finnes ved å søke i tabellene for innhold og filtrere på saksnummer-feltet.
 
     \begin{table}[ht]
         \centering
@@ -81,9 +99,113 @@
             \hline
             Beskrivelse & string & \\
             \hline
-            Kategori & string & FK \\
+            Kategori & integer & FK \\
             \hline
         \end{tabular}
         \label{Sak-tabell}
     \end{table}
+
+    \pagebreak
+
+    \subsection*{Saksinnhold}
+    Hver sak kan inneholde null eller flere poster med innhold. For enkelhets skyld har jeg valg å holde disse til to typer, eposter og saksnotater. Disse puttes i hver sin tabell, og for å sikre at de kan vises i riktig rekkefølge for en saksbehandler har de også et dato-felt som de kan sorteres etter.
+
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \multicolumn{3}{|c|}{\textbf{Notat}} \\
+            \hline
+            ID & integer & \emoji{old-key} \\
+            \hline
+            Saksnummer & integer & \\
+            \hline
+            Opprettet & date & \\
+            \hline
+            Forfatter & integer & FK \\
+            \hline
+            Innhold & string & \\
+            \hline
+        \end{tabular}
+        \quad
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \multicolumn{3}{|c|}{\textbf{E-post}} \\
+            \hline
+            ID & integer & \emoji{old-key} \\
+            \hline
+            Saksnummer & integer & \\
+            \hline
+            Opprettet & date & \\
+            \hline
+            Fra & string &  \\
+            \hline
+            Til & string &  \\
+            \hline
+            Innhold & string & \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    \pagebreak
+
+    \section*{ER-modell}
+    \begin{figure}[h]
+        \includegraphics{er-diagram.png}
+    \end{figure}
+
+    \section*{Spørringer}
+
+    \subsection*{Hent alle innlegg for visning av en sak}
+
+    \begin{verbatim}
+        select
+            *
+        from 
+            sak
+            natural join
+            epost
+            natural join
+            notat
+        where
+            saksnummer = <ønsket saksnummer>;
+    \end{verbatim}
+
+    \subsection*{Finn alle saker behandlet av et gitt team}
+
+    \begin{verbatim}
+        select
+            *
+        from
+            sak
+            natural join
+            kundebehandler
+            natural join
+            team
+        where
+            team.id = <ønsket team>;
+    \end{verbatim}
+    
+    \subsection*{Finn ut hvem som har behandlet saker angående en kunde, om noen}
+
+    \begin{verbatim}
+        select
+            saksbehandler.fornavn,
+            saksbehandler.etternavn,
+            sak.saksnummer
+        from
+            sak
+            right join
+            kundebehandler
+            on sak.saksbehandler = kundebehandler.id
+            right join
+            kunde
+            on kunde.kundenummer = sak.kunde
+        where
+            kunde.kundenummer = <ønsket kunde>;
+    \end{verbatim}
+
+    \subsection*{Oppsummering}
+
+    Denne database-strukturen er relativt enkel, uten noen mellom-tabeller for null-til-mange-relasjoner. Det gjør den også heller snill å skrive spørringer mot, og jeg tror ikke jeg ville gjort noen ting nevneverdig annerledes med modellen jeg har per nå. Den er dog relativt liten, og kunne godt vært utvidet med flere tabeller som kan tilføre videre nytteverdi. Team kan ha teamledere, en kunde kan ha en eller flere kontaktpersoner i stedet for kun ett felt for kontaktinfo, og andre ting enn notater og eposter kan kanskje eksistere inne i saker?
 \end{document}
