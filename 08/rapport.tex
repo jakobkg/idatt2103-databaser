@@ -35,7 +35,6 @@
             Team & integer & FK \\
             \hline
         \end{tabular}
-        \label{Kundebehandler-tabell}
     \end{table}
 
     \subsection*{Team}
@@ -52,7 +51,6 @@
             Navn & string & \\
             \hline
         \end{tabular}
-        \label{Team-tabell}
     \end{table*}
 
     \subsection*{Kundeforhold}
@@ -77,7 +75,6 @@
             Telefonnummer & string &  \\
             \hline
         \end{tabular}
-        \label{Kunde-tabell}
     \end{table}
 
     \subsection*{Sak}
@@ -102,7 +99,6 @@
             Kategori & integer & FK \\
             \hline
         \end{tabular}
-        \label{Sak-tabell}
     \end{table}
 
     \pagebreak
@@ -208,4 +204,44 @@
     \subsection*{Oppsummering}
 
     Denne database-strukturen er relativt enkel, uten noen mellom-tabeller for null-til-mange-relasjoner. Det gjør den også heller snill å skrive spørringer mot, og jeg tror ikke jeg ville gjort noen ting nevneverdig annerledes med modellen jeg har per nå. Den er dog relativt liten, og kunne godt vært utvidet med flere tabeller som kan tilføre videre nytteverdi. Team kan ha teamledere, en kunde kan ha en eller flere kontaktpersoner i stedet for kun ett felt for kontaktinfo, og andre ting enn notater og eposter kan kanskje eksistere inne i saker?
+
+    \section*{XML/JSON i MySQL}
+
+    XML eller JSON brukes som regel for å lagre semi-strukturert data i en database, gjerne der strukturen på data kan endres etter behov. De mest aktuelle områdene å utforske dette på i database-løsningen beskrevet ovenfor vil være tabellene for saksinnhold, der det nå er separate tabeller for interne notater og for mail-korrespondanse. Her kunne det vært mulig med en datastruktur som dekker både disse tilfellene og eventuelt flere andre former for saksinnhold, definert i XML/JSON og integrert med teknologi som XQuery eller lignende. Dette gjør det også mulig å ha et egen-definert format på dataen som kan flyttes på tvers av programvareløsninger, slik at det er enklere å bytte saksbehandlingsverktøy enn om dataen er lagret i et proprietært format.
+
+    Dermed kan tabellene for saksnotater og epost slås sammen til en "Innhold"-tabell som lagrer XML.
+
+    \begin{table}[ht]
+        \centering
+        \begin{tabular}{|c|c|c|}
+            \hline
+            \multicolumn{3}{|c|}{\textbf{Innhold}} \\
+            \hline
+            ID & integer & \emoji{old-key} \\
+            \hline
+            Saksnummer & integer & FK \\
+            \hline
+            Tidspunkt & dato & \\
+            \hline
+            Innhold & XML & \\
+            \hline
+        \end{tabular}
+    \end{table}
+
+    Herfra kan man for eksempel hente brødteksten fra et stykke saksinnhold med en spørring som minner om
+
+    \begin{verbatim}
+        select
+            ExtractValue(brødtekst, '/innlegg/brødtekst')
+        as
+            brødtekst
+        from
+            innhold;
+    \end{verbatim}
+
+    En slik løsning er dog ikke uten ulemper, som å kanskje konvertere mellom XML-formatet og saksbehandlingsverktøyets proprietære dataformat ved lagringi og lesning fra databasen. Det å introdusere en ny teknologi i en løsning vil også føre til økt terskel for å jobbe videre med databasen, mer tid som kreves for opplæring før evt. nye vedlikeholdere eller utviklere kan settes inn i prosjektet og en spredning av definisjoner for dataformat mellom SQL og JSON/XML.
+
+    \section*{NoSQL-løsning}
+
+    Siden denne løsningen er bygd som en relasjonsdatabase fra bunnen av tror jeg ikke den vil være lett overførbar til en NoSQL-løsning. Noen deler av den er lett å se for seg i NoSQL, for eksempel er tabellene om saker med beskrivelse, notater og andre innlegg en god kandidat for en dokumentdatabase. Å bruke en dokumentdatabase kan også bedre tilrettelegge for smidig utvikling der kravspesifikasjoner er flytende og kan endre seg gjennom utviklingsprosessen. Jeg er ikke like overbevist om at ting som listen over kunder og saksbehandlere vil vesentlig forbedres av å endre fra en SQL-basert løsning til NoSQL.
 \end{document}
